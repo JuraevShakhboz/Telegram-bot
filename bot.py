@@ -18,6 +18,11 @@ def get_uid(m):
     r = m.reply_to_message
     return links.get(r.message_id) if r else None
 
+def user_info(u):
+    name = ' '.join(filter(None, [u.first_name, u.last_name])) or 'Nomaʼlum'
+    username = f'@{u.username}' if u.username else 'mavjud emas'
+    return name, username
+
 def desc(m):
     if m.caption:
         return m.caption
@@ -39,11 +44,12 @@ def start(m):
 )
 def user_message(m):
     u = m.from_user
+    name, username = user_info(u)
     if m.content_type == "text":
-        info = bot.send_message(ADMIN_ID, f"👤 {u.first_name or 'Nomaʼlum'}\n🆔 {u.id}\n💬 {m.text}")
+        info = bot.send_message(ADMIN_ID, f"👤 Ism: {name}\n🔗 User name: {username}\n🆔 ID: {u.id}\n💬 Xabar: {m.text}")
         save(info.message_id, u.id)
     else:
-        info = bot.send_message(ADMIN_ID, f"👤 {u.first_name or 'Nomaʼlum'}\n🆔 {u.id}\n💬 {desc(m)}")
+        info = bot.send_message(ADMIN_ID, f"👤 Ism: {name}\n🔗 User name: {username}\n🆔 ID: {u.id}\n💬 Xabar: {desc(m)}")
         save(info.message_id, u.id)
         copied = bot.copy_message(ADMIN_ID, m.chat.id, m.message_id, reply_to_message_id=info.message_id)
         save(copied.message_id, u.id)
